@@ -1,0 +1,181 @@
+@page
+@model SpecializationsModel
+@{
+    ViewData["Title"] = "Specializations";
+}
+
+<style>
+    .specializations-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .specializations-title {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .specializations-subtitle {
+        color: #7f8c8d;
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+    }
+
+    .specializations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        padding: 10px;
+    }
+
+    .specialization-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+    }
+
+    .specialization-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+        color: white;
+        padding: 25px 20px;
+        position: relative;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .card-header .icon {
+        font-size: 2.5rem;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.3;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-body p {
+        color: #5d6d7e;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .card-stats {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #ecf0f1;
+        padding-top: 15px;
+        margin-top: 10px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #8B0000;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #95a5a6;
+        text-transform: uppercase;
+    }
+
+    .view-details {
+        display: inline-block;
+        margin-top: 15px;
+        color: #8B0000;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .view-details:hover {
+        text-decoration: underline;
+    }
+
+    .intro-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 30px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .intro-section h2 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .intro-section p {
+        color: #5d6d7e;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+</style>
+
+<div class="specializations-container">
+    <h1 class="specializations-title">@ViewData["Title"]</h1>
+    <p class="specializations-subtitle">Comprehensive healthcare services tailored to your needs</p>
+
+    <div class="intro-section">
+        <h2>Excellence in Specialized Care</h2>
+        <p>At Contoso Clinic, our team of expert physicians provides world-class care across multiple specializations. 
+           Each department is equipped with state-of-the-art technology and staffed by board-certified specialists 
+           dedicated to delivering the highest quality patient outcomes.</p>
+    </div>
+
+    <div class="specializations-grid">
+        @foreach (var spec in Model.Specializations)
+        {
+            <a href="@spec.PageUrl" class="specialization-card">
+                <div class="card-header">
+                    <h3>@spec.Name</h3>
+                    <span class="icon">@spec.Icon</span>
+                </div>
+                <div class="card-body">
+                    <p>@spec.Description</p>
+                    <div class="card-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">@spec.DoctorCount</div>
+                            <div class="stat-label">Doctors</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">@spec.ServiceCount</div>
+                            <div class="stat-label">Services</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">@spec.YearsEstablished+</div>
+                            <div class="stat-label">Years</div>
+                        </div>
+                    </div>
+                    <span class="view-details">Learn More →</span>
+                </div>
+            </a>
+        }
+    </div>
+</div>

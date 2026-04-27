@@ -1,0 +1,152 @@
+@page
+@model EmployeesModel
+@{
+    ViewData["Title"] = "Employee Directory";
+}
+
+<style>
+    .employee-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .employee-title {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .employee-table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .employee-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .employee-table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .employee-table tbody tr {
+        border-bottom: 1px solid #ecf0f1;
+        transition: all 0.3s ease;
+    }
+
+    .employee-table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .employee-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .employee-table td {
+        padding: 15px;
+        color: #2c3e50;
+    }
+
+    .employee-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .department-badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .dept-engineering {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .dept-sales {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .dept-marketing {
+        background-color: #fff3e0;
+        color: #f57c00;
+    }
+
+    .dept-hr {
+        background-color: #fce4ec;
+        color: #c2185b;
+    }
+
+    .dept-finance {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+
+    .dept-support {
+        background-color: #fff9c4;
+        color: #f57f17;
+    }
+
+    .dept-product {
+        background-color: #e0f2f1;
+        color: #00796b;
+    }
+</style>
+
+<div class="employee-container">
+    <h1 class="employee-title">@ViewData["Title"]</h1>
+    
+    @if (Model.Employees != null && Model.Employees.Any())
+    {
+        <table class="employee-table">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Hiring Date</th>
+                    <th>Department</th>
+                    <th>Job Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in Model.Employees)
+                {
+                    <tr>
+                        <td>@employee.FirstName</td>
+                        <td>@employee.LastName</td>
+                        <td>@DateTime.Parse(employee.HiringDate).ToString("MMMM dd, yyyy")</td>
+                        <td>
+                            @{
+                                var deptClass = employee.Department.Replace(" ", "").ToLower();
+                                var badgeClass = $"department-badge dept-{deptClass}";
+                            }
+                            <span class="@badgeClass">@employee.Department</span>
+                        </td>
+                        <td>@employee.JobTitle</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-center">No employee data available.</p>
+    }
+</div>

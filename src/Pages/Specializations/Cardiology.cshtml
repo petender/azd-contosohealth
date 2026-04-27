@@ -1,0 +1,366 @@
+@page
+@model contosohealth.Pages.Specializations.CardiologyModel
+@{
+    ViewData["Title"] = "Cardiology";
+}
+
+<style>
+    .cardiology-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+        color: white;
+        padding: 50px 40px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: "❤️";
+        font-size: 150px;
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.1;
+    }
+
+    .hero-section h1 {
+        font-size: 2.8rem;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        opacity: 0.95;
+        line-height: 1.7;
+    }
+
+    .breadcrumb-nav {
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb-nav a {
+        color: #8B0000;
+        text-decoration: none;
+    }
+
+    .breadcrumb-nav a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-nav span {
+        color: #7f8c8d;
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #8B0000;
+        display: inline-block;
+    }
+
+    .content-section {
+        margin-bottom: 50px;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        border-left: 4px solid #8B0000;
+    }
+
+    .service-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    .service-card h4 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .service-card p {
+        color: #5d6d7e;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .conditions-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .condition-item {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .condition-item::before {
+        content: "•";
+        color: #8B0000;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .condition-item span {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .procedures-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .procedures-table thead {
+        background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+        color: white;
+    }
+
+    .procedures-table th {
+        padding: 15px 20px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .procedures-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #ecf0f1;
+        color: #2c3e50;
+    }
+
+    .procedures-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .procedures-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .procedure-type {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .procedure-type.diagnostic {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .procedure-type.interventional {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .procedure-type.surgical {
+        background: #fce4ec;
+        color: #c2185b;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 50px;
+    }
+
+    .stat-box {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .stat-box .number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #8B0000;
+    }
+
+    .stat-box .label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
+
+    .contact-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 30px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .contact-info h3 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .contact-info p {
+        color: #5d6d7e;
+        margin: 5px 0;
+    }
+
+    .appointment-btn {
+        background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .appointment-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+        color: white;
+    }
+
+    @@media (max-width: 768px) {
+        .stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .hero-section::before {
+            display: none;
+        }
+    }
+</style>
+
+<div class="cardiology-container">
+    <nav class="breadcrumb-nav">
+        <a href="/Specializations">Specializations</a> <span> / Cardiology</span>
+    </nav>
+
+    <div class="hero-section">
+        <h1>Cardiology Department</h1>
+        <p>Our cardiology team provides comprehensive heart and cardiovascular care using the latest diagnostic 
+           technology and treatment methods. From preventive care to complex interventions, we're dedicated 
+           to keeping your heart healthy.</p>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="number">@Model.DoctorCount</div>
+            <div class="label">Cardiologists</div>
+        </div>
+        <div class="stat-box">
+            <div class="number">15,000+</div>
+            <div class="label">Patients Annually</div>
+        </div>
+        <div class="stat-box">
+            <div class="number">98%</div>
+            <div class="label">Success Rate</div>
+        </div>
+        <div class="stat-box">
+            <div class="number">25+</div>
+            <div class="label">Years Experience</div>
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2 class="section-title">Our Services</h2>
+        <div class="services-grid">
+            @foreach (var service in Model.Services)
+            {
+                <div class="service-card">
+                    <h4>@service.Name</h4>
+                    <p>@service.Description</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2 class="section-title">Conditions We Treat</h2>
+        <div class="conditions-list">
+            @foreach (var condition in Model.Conditions)
+            {
+                <div class="condition-item">
+                    <span>@condition</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="content-section">
+        <h2 class="section-title">Procedures & Treatments</h2>
+        <table class="procedures-table">
+            <thead>
+                <tr>
+                    <th>Procedure</th>
+                    <th>Type</th>
+                    <th>Duration</th>
+                    <th>Recovery</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var procedure in Model.Procedures)
+                {
+                    <tr>
+                        <td><strong>@procedure.Name</strong></td>
+                        <td>
+                            <span class="procedure-type @procedure.Type.ToLower()">@procedure.Type</span>
+                        </td>
+                        <td>@procedure.Duration</td>
+                        <td>@procedure.Recovery</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="contact-section">
+        <div class="contact-info">
+            <h3>Schedule an Appointment</h3>
+            <p>📞 Phone: (555) 123-HEART</p>
+            <p>📧 Email: cardiology@contosoclinic.com</p>
+            <p>📍 Location: Building A, 3rd Floor</p>
+        </div>
+        <a href="#" class="appointment-btn">Book Appointment</a>
+    </div>
+</div>
