@@ -74,7 +74,7 @@
 
 <section class="mb-5">
     <h2>Meet our Neurology specialists</h2>
-    @if (Model.Doctors.Any())
+    @if (Model.Doctors.Count > 0)
     {
         <div class="row g-4">
             @foreach (var doctor in Model.Doctors)
