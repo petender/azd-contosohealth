@@ -6,6 +6,7 @@ namespace contosohealth.Pages;
 
 public class NeurologyModel : PageModel
 {
+    private const string DepartmentName = "Neurology";
     private readonly ApplicationDbContext _context;
 
     public List<Doctor> Doctors { get; private set; } = [];
@@ -19,7 +20,7 @@ public class NeurologyModel : PageModel
     {
         Doctors = await _context.Doctors
             .AsNoTracking()
-            .Where(doctor => doctor.Department == "Neurology")
+            .Where(doctor => doctor.Department == DepartmentName)
             .OrderBy(doctor => doctor.LastName)
             .ToListAsync();
     }
