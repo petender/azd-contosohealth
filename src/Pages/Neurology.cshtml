@@ -1,0 +1,110 @@
+@page
+@model NeurologyModel
+@{
+    ViewData["Title"] = "Neurology";
+}
+
+<style>
+    .neurology-hero {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border-radius: 1rem;
+        color: white;
+        padding: 3rem 2rem;
+    }
+
+    .neurology-card {
+        border: 0;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        height: 100%;
+    }
+
+    .neurology-doctor-photo {
+        width: 80px;
+        height: 80px;
+        border: 3px solid #11998e;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .neurology-contact {
+        background: #f1f8e9;
+        border-left: 4px solid #689f38;
+    }
+</style>
+
+<section class="neurology-hero mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h1>Neurology Care</h1>
+            <p class="lead mb-0">Personalized care for conditions affecting the brain, spine, nerves, and muscles.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2>How we can help</h2>
+    <p>Our Neurology team works with you and your primary care provider to understand symptoms, confirm a diagnosis, and develop a treatment plan that fits your needs.</p>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card neurology-card">
+                <div class="card-body">
+                    <h3 class="h5">Care programs</h3>
+                    <p class="mb-0">Evaluation and ongoing care for headaches and migraines, stroke recovery, movement disorders, memory concerns, seizures, and nerve conditions.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card neurology-card">
+                <div class="card-body">
+                    <h3 class="h5">Diagnostic evaluation</h3>
+                    <p class="mb-0">Your visit may include a detailed neurological exam and coordination of imaging, laboratory testing, or other diagnostic studies.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card neurology-card">
+                <div class="card-body">
+                    <h3 class="h5">Referrals and appointments</h3>
+                    <p class="mb-0">Ask your primary care provider to send relevant records and referral information, or contact our clinic for help getting started.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2>Meet our Neurology specialists</h2>
+    @if (Model.Doctors.Count > 0)
+    {
+        <div class="row g-4">
+            @foreach (var doctor in Model.Doctors)
+            {
+                <div class="col-md-6">
+                    <article class="card neurology-card">
+                        <div class="card-body d-flex gap-3">
+                            <img src="@doctor.PhotoUrl" alt="Portrait of @doctor.FirstName @doctor.LastName" class="neurology-doctor-photo" />
+                            <div>
+                                <h3 class="h5">@doctor.FirstName @doctor.LastName</h3>
+                                <p class="text-success fw-semibold">@doctor.Specialization</p>
+                                <p>@doctor.Bio</p>
+                                <a class="btn btn-outline-success btn-sm" asp-page="/DoctorDetail" asp-route-id="@doctor.Id">View profile</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="status">
+            Neurology specialists are not currently available. Please check the <a asp-page="/Doctors">doctor directory</a> or contact the clinic for assistance.
+        </div>
+    }
+</section>
+
+<section class="neurology-contact rounded p-4 mb-4">
+    <h2 class="h4">Contact the Neurology Clinic</h2>
+    <p class="mb-2">Call <a href="tel:+15550100204">(555) 010-0204</a> to ask about appointments, referrals, or records to bring to your visit.</p>
+    <a class="btn btn-success" asp-page="/Doctors">View all doctors</a>
+</section>
