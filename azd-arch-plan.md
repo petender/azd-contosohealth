@@ -2,17 +2,26 @@
 
 **Date:** January 9, 2026  
 **Project:** martinwebapp - Healthcare Management Application  
-**Framework:** ASP.NET Core 9.0 Razor Pages  
+**Framework:** ASP.NET Core 11.0 RC 3 Razor Pages
 **Target Platform:** Azure
 
 ---
 
 ## Phase 1: Discovery and Analysis
 
+### .NET 11 upgrade note (November 5, 2026)
+
+The development target is .NET 11 RC 3 with SDK `11.0.100-rc.3.26522.148`
+and EF Core `11.0.0-rc.3.26522.148`. The Linux runtime stack is `dotnet|11`,
+as reported by `az webapp list-runtimes --os linux`. Verify regional and host
+runtime compatibility before deployment; this upgrade has not been deployed
+to Azure. SQL Server query compatibility remains explicitly at level 150.
+See [deployment prerequisites](AZURE_DEPLOYMENT.md) for the release gate.
+
 ### Application Overview
 
 **Application Type:** Healthcare Management Web Application  
-**Framework:** ASP.NET Core 9.0 with Razor Pages  
+**Framework:** ASP.NET Core 11.0 RC 3 with Razor Pages
 **Authentication:** Cookie-based authentication for healthcare providers  
 **Database:** Currently SQLite (healthcare.db) → Migrating to Azure SQL Database
 
@@ -20,8 +29,8 @@
 
 | Component Type | Technology | Location | Purpose | Entry Point |
 |---|---|---|---|---|
-| Web Application | ASP.NET Core 9.0 Razor Pages | `/Pages` | Healthcare management UI | `Program.cs` |
-| Data Layer | Entity Framework Core 9.0 | `/Data` | ORM and database access | `ApplicationDbContext.cs` |
+| Web Application | ASP.NET Core 11.0 Razor Pages | `/Pages` | Healthcare management UI | `Program.cs` |
+| Data Layer | Entity Framework Core 11.0 | `/Data` | ORM and database access | `ApplicationDbContext.cs` |
 | Database | SQLite → Azure SQL | `/healthcare.db` | Patient/Doctor data storage | Connection string in `appsettings.json` |
 | Static Assets | wwwroot | `/wwwroot` | Images, CSS, JS, Bootstrap 5.3 | Various |
 | Authentication | ASP.NET Core Identity (Cookies) | `Program.cs` | Doctor authentication | Login/Logout pages |
@@ -63,9 +72,9 @@ c:\martinwebapp\
 ### Technology Stack Analysis
 
 **Backend Framework:**
-- ASP.NET Core 9.0 (Razor Pages)
-- C# .NET 9.0
-- Entity Framework Core 9.0.0
+- ASP.NET Core 11.0 RC 3 (Razor Pages)
+- C# .NET 11.0
+- Entity Framework Core 11.0.0-rc.3.26522.148
 
 **Data Access:**
 - Entity Framework Core with Code-First approach
@@ -81,8 +90,9 @@ c:\martinwebapp\
 **NuGet Dependencies:**
 ```xml
 - Azure.AI.OpenAI (2.1.0) - For future AI integration
-- Microsoft.EntityFrameworkCore.Sqlite (9.0.0) - Current database provider
-- Microsoft.EntityFrameworkCore.Design (9.0.0) - Design-time tools
+- Microsoft.EntityFrameworkCore.Sqlite (11.0.0-rc.3.26522.148) - Local database provider
+- Microsoft.EntityFrameworkCore.SqlServer (11.0.0-rc.3.26522.148) - Azure SQL provider
+- Microsoft.EntityFrameworkCore.Design (11.0.0-rc.3.26522.148) - Design-time tools
 ```
 
 **Frontend:**
@@ -97,10 +107,10 @@ c:\martinwebapp\
 
 **1. Web Application Layer**
 - **Type:** ASP.NET Core Razor Pages Web App
-- **Technology:** .NET 9.0 Runtime
+- **Technology:** .NET 11.0 RC 3 Runtime
 - **Build:** `dotnet build` → `dotnet publish`
 - **Port:** 5258 (development)
-- **Hosting Recommendation:** Azure App Service (Linux with .NET 9.0)
+- **Hosting Recommendation:** Azure App Service (Linux with compatible .NET 11.0 runtime)
 
 **2. Database Layer**
 - **Current:** SQLite (healthcare.db) - File-based
@@ -232,7 +242,7 @@ dotnet publish --configuration Release --output ./publish
 ```
 
 **Runtime Requirements:**
-- .NET 9.0 Runtime (Linux or Windows)
+- Compatible .NET 11.0 Runtime (Linux or Windows)
 - SQL Server connection (Azure SQL)
 - HTTPS support
 - Environment variables for configuration
@@ -241,7 +251,7 @@ dotnet publish --configuration Release --output ./publish
 
 - [x] Complete inventory of all application artifacts documented
 - [x] All major application components identified (Web App, Database, Static Assets)
-- [x] Component technologies documented (.NET 9.0, EF Core, Razor Pages)
+- [x] Component technologies documented (.NET 11.0 RC 3, EF Core, Razor Pages)
 - [x] Dependencies mapped (Web → DB, Auth → DB, External packages)
 - [x] External services catalogued (Azure OpenAI future integration)
 - [x] Configuration requirements identified (Connection strings, env vars)
@@ -258,7 +268,7 @@ dotnet publish --configuration Release --output ./publish
 
 | Component | Current Technology | Azure Service | SKU/Tier | Rationale |
 |---|---|---|---|---|
-| Web Application | ASP.NET Core 9.0 Razor Pages | **Azure App Service (Linux)** | B1 (Basic) | Native .NET 9.0 support, built-in scaling, easy deployment, SSL included. No containerization needed for Razor Pages app. |
+| Web Application | ASP.NET Core 11.0 Razor Pages | **Azure App Service (Linux)** | B1 (Basic) | Requires a compatible .NET 11.0 runtime; built-in scaling, ZIP deployment, and SSL. No containerization needed when runtime prerequisites are met. |
 | Database | SQLite (healthcare.db) | **Azure SQL Database** | Basic (5 DTU) | SQL Server compatibility with EF Core, minimal code changes, managed backups, geo-redundancy options. Perfect for healthcare data. |
 | Monitoring | None | **Application Insights** | Standard | Real-time monitoring, performance tracking, exception logging, user analytics. Essential for production healthcare app. |
 | Secrets Management | appsettings.json | **Azure Key Vault** | Standard | Secure storage for connection strings, API keys. Healthcare data compliance requirement. |
@@ -268,7 +278,7 @@ dotnet publish --configuration Release --output ./publish
 
 #### Primary Web Application
 - **Selected Service:** Azure App Service (Linux)  
-- **Runtime Stack:** .NET 9.0  
+- **Runtime Stack:** .NET 11.0 (`dotnet|11`; verify RC compatibility before deployment)
 - **Deployment Method:** Azure Developer CLI (azd) with ZIP deploy  
 - **Scaling:** Manual scaling (Basic tier), can upgrade to Standard for auto-scale  
 - **HTTPS:** Automatic with App Service managed certificate  
@@ -353,7 +363,7 @@ Internet (HTTPS)
       ↓
 Azure Front Door (Optional - for multi-region)
       ↓
-Azure App Service (Linux - .NET 9.0)
+Azure App Service (Linux - .NET 11.0)
       ↓ (Virtual Network Integration - Optional)
       ↓ (Service Endpoint / Private Endpoint - Optional)
 Azure SQL Database
@@ -455,7 +465,7 @@ Based on the selected Azure services, the following Bicep files need to be gener
 
 #### Service-Specific Modules
 - [ ] `./infra/resources.bicep` - All resources orchestration
-- [ ] `./infra/modules/app-service.bicep` - App Service Plan + Web App (Linux, .NET 9.0)
+- [ ] `./infra/modules/app-service.bicep` - App Service Plan + Web App (Linux, .NET 11.0)
 - [ ] `./infra/modules/database.bicep` - Azure SQL Server + Database
 - [ ] `./infra/modules/monitoring.bicep` - Log Analytics + Application Insights
 - [ ] `./infra/modules/keyvault.bicep` - Key Vault for secrets management
@@ -466,7 +476,9 @@ Based on the selected Azure services, the following Bicep files need to be gener
 
 **Decision:** ✗ **No Docker files required**
 
-The ASP.NET Core Razor Pages application will deploy directly to Azure App Service using native .NET 9.0 runtime without containerization.
+The ASP.NET Core Razor Pages application will deploy directly to Azure App Service
+using a compatible native .NET 11.0 runtime without containerization, after the
+runtime prerequisites have been verified.
 
 **Rationale:**
 - Simpler deployment model for monolithic web apps

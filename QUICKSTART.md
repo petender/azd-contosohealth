@@ -1,5 +1,15 @@
 # Quick Start - Deploy to Azure
 
+## .NET 11 RC 3 prerequisite
+
+Install the SDK selected by [global.json](global.json):
+`11.0.100-rc.3.26522.148`. This is a development prerelease upgrade.
+Before deployment, run `az webapp list-runtimes --os linux --output table` and
+confirm the configured `dotnet|11` stack and an RC-compatible runtime in your
+target region and web app. The catalog reported this stack on November 5, 2026,
+but no Azure deployment has been validated for this upgrade. If the required
+runtime is unavailable, do not deploy. See [deployment prerequisites](AZURE_DEPLOYMENT.md).
+
 ## 🚀 Deploy in 3 Commands
 
 ### 1. Login to Azure
@@ -14,7 +24,7 @@ azd up
 **What it does:**
 - ✅ Creates Resource Group
 - ✅ Provisions Azure SQL Database
-- ✅ Creates App Service (Linux + .NET 9.0)
+- ✅ Creates App Service (Linux + .NET 11.0)
 - ✅ Sets up Key Vault with secrets
 - ✅ Configures Application Insights
 - ✅ Deploys your application code
@@ -58,4 +68,4 @@ azd down
 
 ---
 
-**Ready to deploy?** Just run: `azd up`
+After confirming the .NET 11 runtime prerequisites, run: `azd up`

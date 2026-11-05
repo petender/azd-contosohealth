@@ -17,15 +17,36 @@ Contoso Clinic is a comprehensive healthcare management system designed to manag
 ### Technology Stack
 
 #### Backend
-- **Framework**: ASP.NET Core 9.0 (Razor Pages)
-- **Language**: C# .NET 9.0
-- **ORM**: Entity Framework Core 9.0.0
+- **Framework**: ASP.NET Core 11.0 RC 3 (Razor Pages)
+- **Language**: C# .NET 11.0
+- **ORM**: Entity Framework Core 11.0.0-rc.3.26522.148
 - **Database**: SQLite 3.x
 - **Authentication**: ASP.NET Core Identity (Cookie Authentication)
 - **Additional Libraries**:
   - Azure.AI.OpenAI 2.1.0
-  - Microsoft.EntityFrameworkCore.Sqlite 9.0.0
-  - Microsoft.EntityFrameworkCore.Design 9.0.0
+  - Microsoft.EntityFrameworkCore.Sqlite 11.0.0-rc.3.26522.148
+  - Microsoft.EntityFrameworkCore.SqlServer 11.0.0-rc.3.26522.148
+  - Microsoft.EntityFrameworkCore.Design 11.0.0-rc.3.26522.148
+
+### .NET 11 development upgrade
+
+This branch uses the published .NET 11 RC 3 release, not stable .NET 11.
+The SDK is selected by [global.json](global.json): install SDK
+`11.0.100-rc.3.26522.148` (later patches in the same feature band are allowed).
+The existing Razor Pages, cookie authentication, static asset pipeline, and
+`Database.EnsureCreated()` initialization remain in place. SQL Server query
+compatibility is explicitly kept at level 150, the previous EF Core default,
+instead of adopting EF Core 11's new default of 160. SQL authentication remains
+unchanged; Entra ID SQL authentication would additionally require
+`Microsoft.Data.SqlClient.Extensions.Azure` with SqlClient 7.
+
+The existing Razor Pages antiforgery tokens are retained. Login continues to
+require a valid token, including for cross-origin form submissions; the upgrade
+does not disable or replace this protection.
+
+Before production adoption, update the SDK and EF Core packages to stable
+.NET 11 releases and repeat build, publish, and database integration checks.
+Development work is tracked in [issue #17](https://github.com/petender/azd-contosohealth/issues/17).
 
 #### Frontend
 - **UI Framework**: Bootstrap 5.3
@@ -50,7 +71,7 @@ This application is Azure-ready and can be deployed using the Azure Developer CL
 ```
 Internet (HTTPS)
       ↓
-Azure App Service (Linux .NET 9.0)
+Azure App Service (Linux .NET 11.0)
       ├─→ Azure SQL Database
       ├─→ Azure Key Vault (Secrets)
       └─→ Application Insights (Monitoring)
@@ -61,7 +82,7 @@ Azure App Service (Linux .NET 9.0)
 | Resource | Purpose | SKU/Tier |
 |---|---|---|
 | **App Service Plan** | Hosts the web application | B1 (Basic) Linux |
-| **App Service** | ASP.NET Core 9.0 Razor Pages | - |
+| **App Service** | ASP.NET Core 11.0 Razor Pages | - |
 | **Azure SQL Database** | Patient and doctor data storage | Basic (5 DTU) |
 | **Azure SQL Server** | Logical server for SQL Database | - |
 | **Key Vault** | Secure secrets storage | Standard |
@@ -73,7 +94,21 @@ Azure App Service (Linux .NET 9.0)
 - [Azure Developer CLI (azd)](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd)
 - [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli)
 - Azure subscription with appropriate permissions
-- .NET 9.0 SDK
+- .NET 11 RC 3 SDK selected by [global.json](global.json)
+
+Before running `azd up`, `azd provision`, or `azd deploy`, confirm the Linux
+runtime catalog contains the configured `dotnet|11` stack:
+
+```bash
+az webapp list-runtimes --os linux --output table
+```
+
+The catalog reported `dotnet|11` on November 5, 2026. This is not verification
+of the runtime installed in a particular region or existing web app. Confirm
+that the target host runs a runtime compatible with this RC 3 application.
+Do not deploy the framework-dependent build if a compatible runtime is
+unavailable; do not substitute an older runtime stack. No Azure deployment
+has been performed as part of this development upgrade.
 
 ### Quick Deploy to Azure
 
@@ -251,8 +286,8 @@ az keyvault secret list --vault-name kv-{unique-id}
 ## 🚀 Getting Started
 
 ### Prerequisites
-- .NET 9.0 SDK or later
-- Visual Studio 2022, VS Code, or any C# IDE
+- .NET SDK `11.0.100-rc.3.26522.148` selected by [global.json](global.json)
+- VS Code with C# tooling, or an IDE supporting the .NET 11 SDK
 - Git (for version control)
 
 ### Installation
@@ -260,22 +295,22 @@ az keyvault secret list --vault-name kv-{unique-id}
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd martinwebapp
+   cd azd-contosohealth
    ```
 
 2. **Restore dependencies**
    ```bash
-   dotnet restore
+   dotnet restore src/contosohealth.sln
    ```
 
 3. **Build the project**
    ```bash
-   dotnet build
+   dotnet build src/contosohealth.sln --configuration Release
    ```
 
 4. **Run the application**
    ```bash
-   dotnet run
+   dotnet run --project src/contosohealth.csproj
    ```
 
 5. **Access the application**
@@ -437,16 +472,28 @@ Configured in `Program.cs`:
 ### Running in Development Mode
 
 ```bash
-dotnet run --environment Development
+dotnet run --project src/contosohealth.csproj --environment Development
 ```
 
 ### Building for Production
 
 ```bash
-dotnet publish -c Release -o ./publish
+dotnet publish src/contosohealth.csproj -c Release -r linux-x64 --self-contained false -o ./publish
 ```
 
 ## 🧪 Testing the Application
+
+Run the repeatable smoke checks against a local instance with a fresh SQLite
+database. Supply a seeded demo doctor account when prompted:
+
+```powershell
+.\scripts\Test-Smoke.ps1 -BaseUri http://localhost:5258 -Credential (Get-Credential)
+```
+
+The checks cover the eight seeded doctors and patients, public and protected
+pages, detail lookups, static assets, login failure, antiforgery and cross-origin rejection,
+successful login, and logout. Use only a local development instance, not a
+production environment.
 
 1. **Homepage**: Navigate to `http://localhost:5258`
 2. **View Doctors**: Click "Doctors" in navigation or "Our Doctors" button
@@ -460,8 +507,9 @@ dotnet publish -c Release -o ./publish
 ### NuGet Packages
 ```xml
 <PackageReference Include="Azure.AI.OpenAI" Version="2.1.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0-rc.3.26522.148" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0-rc.3.26522.148" />
+<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="11.0.0-rc.3.26522.148" />
 ```
 
 ## 🐛 Known Issues
@@ -498,4 +546,4 @@ For issues or questions, please refer to the project documentation or contact th
 
 **Last Updated**: January 9, 2026  
 **Version**: 1.0.0  
-**Framework**: ASP.NET Core 9.0
+**Framework**: ASP.NET Core 11.0 RC 3

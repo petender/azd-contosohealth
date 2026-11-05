@@ -35,7 +35,8 @@ else
 {
     // SQL Server for Azure deployment
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(connectionString));
+        options.UseSqlServer(connectionString, sqlOptions =>
+            sqlOptions.UseCompatibilityLevel(150)));
 }
 
 var app = builder.Build();

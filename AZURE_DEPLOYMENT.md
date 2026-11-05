@@ -1,8 +1,19 @@
 # Azure Deployment Summary - Contoso Clinic
 
-## ✅ Deployment Ready Status
+## .NET 11 RC 3 deployment prerequisites
 
-Your healthcare management application is now fully configured for Azure deployment using the Azure Developer CLI (azd).
+The application targets .NET 11 RC 3 for development. Infrastructure is configured
+for the Linux `dotnet|11` App Service stack, which the Azure CLI catalog reported
+on November 5, 2026. Before provisioning or deploying, run
+`az webapp list-runtimes --os linux --output table` and verify the target region
+and web app provide a runtime compatible with RC 3. Catalog availability alone
+does not verify a deployed host. Do not deploy to an older runtime.
+
+Install SDK `11.0.100-rc.3.26522.148`, selected by [global.json](global.json).
+No Azure deployment has been validated for this upgrade. Update to stable
+.NET 11 and revalidate before production adoption. See the
+[upgrade notes](README.md#net-11-development-upgrade) and
+[development issue #17](https://github.com/petender/azd-contosohealth/issues/17).
 
 ## 📦 What Was Created
 
@@ -17,7 +28,7 @@ Your healthcare management application is now fully configured for Azure deploym
   - `main.bicep` - Primary deployment template with SecurityControl:Ignore tag
   - `main.parameters.json` - Parameter definitions for azd
   - `abbreviations.json` - Resource naming conventions
-  - `modules/app-service.bicep` - App Service Plan + Web App (Linux, .NET 9.0)
+  - `modules/app-service.bicep` - App Service Plan + Web App (Linux, .NET 11.0)
   - `modules/database.bicep` - Azure SQL Server + Database
   - `modules/monitoring.bicep` - Application Insights + Log Analytics
   - `modules/keyvault.bicep` - Key Vault for secrets
@@ -54,7 +65,7 @@ Your healthcare management application is now fully configured for Azure deploym
 |---|---|---|
 | Resource Group | `rg-{env-name}` | Container for all resources |
 | App Service Plan | `asp-{unique-id}` | Linux B1 Basic tier |
-| App Service | `app-{unique-id}` | .NET 9.0 web application |
+| App Service | `app-{unique-id}` | .NET 11.0 web application |
 | SQL Server | `sql-{unique-id}` | Logical SQL server |
 | SQL Database | `sqldb-healthcare` | Patient/doctor data (Basic 5 DTU) |
 | Key Vault | `kv-{unique-id}` | Secrets management |
@@ -157,9 +168,9 @@ Breakdown:
 
 ## 🔄 Development Workflow
 
-### Local Development (No Changes)
+### Local Development (.NET 11 RC 3 SDK required)
 ```bash
-dotnet run
+dotnet run --project src/contosohealth.csproj
 ```
 - Uses SQLite (`healthcare.db`)
 - Same development experience
